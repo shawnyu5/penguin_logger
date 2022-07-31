@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -39,7 +38,6 @@ func TestLoggerHandler(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error reading body: %v", err)
 	}
-	fmt.Println(fmt.Sprintf("TestLoggerHandler data: %v", string(data))) // __AUTO_GENERATED_PRINT_VAR__
 
 	var loggerProduct LoggerProduct
 	err = json.Unmarshal(data, &loggerProduct) // parse json data into struct

@@ -29,6 +29,9 @@ type LoggerProduct struct {
 	Discount_percentage float64 `json:"discount_percentage"`
 }
 
+type CoinProductService interface {
+}
+
 func main() {
 	// initialize the cache
 	storage = cache.New(cache.NoExpiration, 10*time.Minute)
@@ -142,9 +145,18 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method "+r.Method+" not allowed", 404)
 		return
 	}
+
+	logger := log.New(os.Stdout, "", log.LUTC)
+
+	var s search.SearchService
+	s = search.SearchServiceImpl{}
+	s = search.LoggingMiddleware{Logger: logger, Next: s}
+
 	body, err := ioutil.ReadAll(r.Body)
 	product := search.Product{Title: string(body)}
-	result := search.SearchByRegex(&product)
+	result, err := s.SearchByRegex(&product)
+	// result := search.SearchByRegex(&product)
+
 	j, err := json.MarshalIndent(result, "", "  ")
 	if err != nil {
 		panic(err)
